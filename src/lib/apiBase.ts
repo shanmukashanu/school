@@ -1,3 +1,3 @@
-const API_BASE = (import.meta as any).env?.PROD ? "/api" : "http://localhost:5000/api";
+const API_BASE = "/api";
 
 export default API_BASE;
