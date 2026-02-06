@@ -11,6 +11,7 @@ import { SimpleSelect as Select } from '@/components/ui/SimpleSelect';
 import { AdmissionEnquiry, FeeEnquiry, ContactEnquiry } from '@/types';
 import { clearAuth } from '@/lib/auth';
 import { useNavigate } from 'react-router-dom';
+import API_BASE from '@/lib/apiBase';
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +21,6 @@ export const AdminDashboard: React.FC = () => {
   const [feeEnquiries, setFeeEnquiries] = useState<FeeEnquiry[]>([]);
   const [contactEnquiries, setContactEnquiries] = useState<ContactEnquiry[]>([]);
   const [loading, setLoading] = useState(true);
-  const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:5000';
 
   // Gallery state
   const [galleryCategory, setGalleryCategory] = useState('All Photos');
@@ -111,7 +111,7 @@ export const AdminDashboard: React.FC = () => {
     try {
       const school = (schoolOverride !== undefined ? schoolOverride : noticesFilterSchool) || '';
       const q = school ? `?school=${encodeURIComponent(school)}` : '';
-      const res = await fetch(`${API_BASE}/api/notices${q}`);
+      const res = await fetch(`${API_BASE}/notices${q}`);
       const data = await res.json();
       setNotices(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -123,7 +123,7 @@ export const AdminDashboard: React.FC = () => {
     try {
       const school = (schoolOverride !== undefined ? schoolOverride : eventsFilterSchool) || '';
       const q = school ? `?school=${encodeURIComponent(school)}` : '';
-      const res = await fetch(`${API_BASE}/api/events${q}`);
+      const res = await fetch(`${API_BASE}/events${q}`);
       const data = await res.json();
       setEvents(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -146,7 +146,7 @@ export const AdminDashboard: React.FC = () => {
     try {
       const category = cat ?? galleryCategory;
       const q = category && category !== 'All Photos' ? `?category=${encodeURIComponent(category)}` : '';
-      const res = await fetch(`${API_BASE}/api/gallery${q}`);
+      const res = await fetch(`${API_BASE}/gallery${q}`);
       const data = await res.json();
       setGalleryItems(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -158,7 +158,7 @@ export const AdminDashboard: React.FC = () => {
     try {
       const category = cat ?? blogCategory;
       const q = category && category !== 'All Posts' ? `?category=${encodeURIComponent(category)}` : '';
-      const res = await fetch(`${API_BASE}/api/blogs${q}`);
+      const res = await fetch(`${API_BASE}/blogs${q}`);
       const data = await res.json();
       setBlogs(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -170,7 +170,7 @@ export const AdminDashboard: React.FC = () => {
     try {
       const category = cat ?? docCategory;
       const q = category ? `?category=${encodeURIComponent(category)}` : '';
-      const res = await fetch(`${API_BASE}/api/documents${q}`);
+      const res = await fetch(`${API_BASE}/documents${q}`);
       const data = await res.json();
       setDocuments(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -192,7 +192,7 @@ export const AdminDashboard: React.FC = () => {
   const loadNewsletter = async () => {
     try {
       const schoolQ = selectedSchool?.code ? `?school=${encodeURIComponent(selectedSchool.code)}` : '';
-      const res = await fetch(`${API_BASE}/api/newsletter${schoolQ}`, {
+      const res = await fetch(`${API_BASE}/newsletter${schoolQ}`, {
         headers: { ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) },
       });
       const data = await res.json().catch(() => ([]));
@@ -206,7 +206,7 @@ export const AdminDashboard: React.FC = () => {
   const loadUsers = async (role?: string) => {
     try {
       const q = role ? `?role=${encodeURIComponent(role)}` : '';
-      const res = await fetch(`${API_BASE}/api/users${q}`);
+      const res = await fetch(`${API_BASE}/users${q}`);
       const data = await res.json();
       setUsers(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -388,7 +388,7 @@ export const AdminDashboard: React.FC = () => {
                     priority: noticePriority,
                     school: noticeSchool || (selectedSchool?.code || ''),
                   };
-                  const res = await fetch(`${API_BASE}/api/notices`, {
+                  const res = await fetch(`${API_BASE}/notices`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                   });
                   const data = await res.json().catch(() => ({}));
@@ -441,7 +441,7 @@ export const AdminDashboard: React.FC = () => {
                         <p className="text-xs text-gray-500">{n.priority}{n.school ? ` • ${n.school}` : ''}</p>
                         <p className="text-sm text-gray-700 mt-1 line-clamp-2">{n.content}</p>
                       </div>
-                      <Button variant="outline" onClick={async () => { await fetch(`${API_BASE}/api/notices/${n._id}`, { method: 'DELETE' }); loadNotices(); }}>Delete</Button>
+                      <Button variant="outline" onClick={async () => { await fetch(`${API_BASE}/notices/${n._id}`, { method: 'DELETE' }); loadNotices(); }}>Delete</Button>
                     </div>
                   ))
                 )}
@@ -466,7 +466,7 @@ export const AdminDashboard: React.FC = () => {
                     description: eventDescription,
                     school: eventSchool || (selectedSchool?.code || ''),
                   };
-                  const res = await fetch(`${API_BASE}/api/events`, {
+                  const res = await fetch(`${API_BASE}/events`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                   });
                   const data = await res.json().catch(() => ({}));
@@ -515,7 +515,7 @@ export const AdminDashboard: React.FC = () => {
                         <p className="text-xs text-gray-500">{ev.date}{ev.time ? ` • ${ev.time}` : ''}{ev.school ? ` • ${ev.school}` : ''}</p>
                         {ev.description ? <p className="text-sm text-gray-700 mt-1 line-clamp-2">{ev.description}</p> : null}
                       </div>
-                      <Button variant="outline" onClick={async () => { await fetch(`${API_BASE}/api/events/${ev._id}`, { method: 'DELETE' }); loadEvents(); }}>Delete</Button>
+                      <Button variant="outline" onClick={async () => { await fetch(`${API_BASE}/events/${ev._id}`, { method: 'DELETE' }); loadEvents(); }}>Delete</Button>
                     </div>
                   ))
                 )}
@@ -722,7 +722,7 @@ export const AdminDashboard: React.FC = () => {
                   form.append('file', galleryFile);
                   form.append('title', galleryTitle || 'Photo');
                   form.append('category', galleryCategory);
-                  const res = await fetch(`${API_BASE}/api/gallery`, { method: 'POST', body: form });
+                  const res = await fetch(`${API_BASE}/gallery`, { method: 'POST', body: form });
                   const data = await res.json().catch(() => ({}));
                   if (!res.ok) return alert(data?.error || 'Upload failed');
                   setGalleryTitle('');
@@ -782,7 +782,7 @@ export const AdminDashboard: React.FC = () => {
                       <Button
                         variant="outline"
                         onClick={async () => {
-                          await fetch(`${API_BASE}/api/gallery/${g._id}`, { method: 'DELETE' });
+                          await fetch(`${API_BASE}/gallery/${g._id}`, { method: 'DELETE' });
                           loadGallery();
                         }}
                       >Delete</Button>
@@ -809,7 +809,7 @@ export const AdminDashboard: React.FC = () => {
                   form.append('title', blogTitle);
                   form.append('content', blogContent);
                   form.append('category', blogCategory);
-                  const res = await fetch(`${API_BASE}/api/blogs`, { method: 'POST', body: form });
+                  const res = await fetch(`${API_BASE}/blogs`, { method: 'POST', body: form });
                   const data = await res.json().catch(() => ({}));
                   if (!res.ok) return alert(data?.error || 'Create failed');
                   setBlogTitle('');
@@ -869,7 +869,7 @@ export const AdminDashboard: React.FC = () => {
                     <p className="text-xs text-gray-500 mb-2">{b.category}</p>
                     <p className="text-sm text-gray-700 line-clamp-3">{b.content}</p>
                     <div className="mt-3 text-right">
-                      <Button variant="outline" onClick={async () => { await fetch(`${API_BASE}/api/blogs/${b._id}`, { method: 'DELETE' }); loadBlogs(); }}>Delete</Button>
+                      <Button variant="outline" onClick={async () => { await fetch(`${API_BASE}/blogs/${b._id}`, { method: 'DELETE' }); loadBlogs(); }}>Delete</Button>
                     </div>
                   </div>
                 ))}
@@ -892,7 +892,7 @@ export const AdminDashboard: React.FC = () => {
                   form.append('file', docFile);
                   form.append('title', docTitle);
                   form.append('category', docCategory);
-                  const res = await fetch(`${API_BASE}/api/documents`, { method: 'POST', body: form });
+                  const res = await fetch(`${API_BASE}/documents`, { method: 'POST', body: form });
                   const data = await res.json().catch(() => ({}));
                   if (!res.ok) return alert(data?.error || 'Upload failed');
                   setDocTitle('');
@@ -943,7 +943,7 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="flex gap-2">
                       <a className="underline text-blue-600" href={d.pdfUrl} target="_blank" rel="noreferrer">View</a>
-                      <Button variant="outline" onClick={async () => { await fetch(`${API_BASE}/api/documents/${d._id}`, { method: 'DELETE' }); loadDocuments(); }}>Delete</Button>
+                      <Button variant="outline" onClick={async () => { await fetch(`${API_BASE}/documents/${d._id}`, { method: 'DELETE' }); loadDocuments(); }}>Delete</Button>
                     </div>
                   </div>
                 ))}
@@ -964,7 +964,7 @@ export const AdminDashboard: React.FC = () => {
                   const finalSchool = uSchool || selectedSchool?.code || '';
                   if (!finalSchool) return alert('Please select a school');
                   const payload = { username: uUsername, password: uPassword, role: uRole, name: uName, email: uEmail, school: finalSchool };
-                  const res = await fetch(`${API_BASE}/api/users`, {
+                  const res = await fetch(`${API_BASE}/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) },
                     body: JSON.stringify(payload)
@@ -1051,7 +1051,7 @@ export const AdminDashboard: React.FC = () => {
                           <td className="px-6 py-4">{u.school || '-'}</td>
                           <td className="px-6 py-4">
                             <Button variant="outline" onClick={async () => {
-                              await fetch(`${API_BASE}/api/users/${u._id}`, { method: 'DELETE', headers: { ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) } });
+                              await fetch(`${API_BASE}/users/${u._id}`, { method: 'DELETE', headers: { ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) } });
                               loadUsers(userRoleFilter || undefined);
                             }}>Delete</Button>
                           </td>
@@ -1100,7 +1100,7 @@ export const AdminDashboard: React.FC = () => {
                         <td className="px-6 py-4 text-right">
                           <Button variant="outline" onClick={async () => {
                             if (!confirm('Delete this subscription?')) return;
-                            await fetch(`${API_BASE}/api/newsletter/${n._id}`, {
+                            await fetch(`${API_BASE}/newsletter/${n._id}`, {
                               method: 'DELETE',
                               headers: { ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}) },
                             });

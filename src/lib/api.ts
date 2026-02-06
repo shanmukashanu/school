@@ -1,6 +1,5 @@
 import { getToken } from './auth';
-
-const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:5000';
+import API_BASE from './apiBase';
 
 export async function apiGet(path: string) {
   const res = await fetch(`${API_BASE}${path}`, {

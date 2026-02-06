@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import API_BASE from '@/lib/apiBase';
 
 export const AcademicsSection: React.FC = () => {
   const [activeLevel, setActiveLevel] = useState('primary');
@@ -93,22 +94,22 @@ export const AcademicsSection: React.FC = () => {
     }
   ];
 
-  const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:5000';
   const [downloads, setDownloads] = useState<{ name: string; size?: string; type: string; url: string }[]>([]);
 
   useEffect(() => {
     const loadDocs = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/documents?category=Academics`);
+        const res = await fetch(`${API_BASE}/documents?category=Academics`);
         const data = await res.json();
         const mapped = (data || []).map((d: any) => ({
           name: d.title,
-          type: 'PDF',
+          type: d.category || 'Document',
           url: d.pdfUrl,
         }));
         setDownloads(mapped);
       } catch (e) {
         console.error('Failed to load documents', e);
+        setDownloads([]);
       }
     };
     loadDocs();
@@ -187,7 +188,7 @@ export const AcademicsSection: React.FC = () => {
           <h3 className="text-2xl font-bold text-gray-900 text-center mb-10">Academic Facilities</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {facilities.map((facility, index) => (
-              <Card key={index} hover className="p-6">
+              <Card key={index} className="p-6">
                 <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white mb-4">
                   {facility.icon}
                 </div>

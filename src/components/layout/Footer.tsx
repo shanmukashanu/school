@@ -4,6 +4,7 @@ import { useSchool } from '@/context/SchoolContext';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import API_BASE from '@/lib/apiBase';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
@@ -16,7 +17,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const [newsletterStatus, setNewsletterStatus] = useState<'idle'|'loading'|'success'|'error'>('idle');
   const [secretOpen, setSecretOpen] = useState(false);
   const [secretValue, setSecretValue] = useState('');
-  const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:5000';
 
   const quickLinks = [
     { label: 'About Us', page: 'about' },
@@ -61,7 +61,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   if (!newsletterEmail.trim()) return;
                   try {
                     setNewsletterStatus('loading');
-                    const res = await fetch(`${API_BASE}/api/newsletter/subscribe`, {
+                    const res = await fetch(`${API_BASE}/newsletter/subscribe`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ email: newsletterEmail, school: selectedSchool?.code }),

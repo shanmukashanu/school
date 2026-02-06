@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSchool } from '@/context/SchoolContext';
 import { Modal } from '@/components/ui/Modal';
+import API_BASE from '@/lib/apiBase';
 
 interface GalleryImage {
   _id: string;
@@ -14,7 +15,6 @@ export const GallerySection: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [activeCategory, setActiveCategory] = useState('all');
   const [images, setImages] = useState<GalleryImage[]>([]);
-  const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:5000';
 
   const categories = ['all', 'Campus', 'Events', 'Sports', 'Academics', 'Cultural', 'Labs'];
 
@@ -22,7 +22,7 @@ export const GallerySection: React.FC = () => {
     const load = async () => {
       try {
         const cat = activeCategory === 'all' ? '' : `?category=${encodeURIComponent(activeCategory)}`;
-        const res = await fetch(`${API_BASE}/api/gallery${cat}`);
+        const res = await fetch(`${API_BASE}/gallery${cat}`);
         const data = await res.json();
         if (Array.isArray(data)) setImages(data);
       } catch (e) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Modal } from '@/components/ui/Modal';
+import API_BASE from '@/lib/apiBase';
 
 interface BlogPost {
   id: string;
@@ -21,13 +22,12 @@ export const BlogSection: React.FC = () => {
   const categories = ['all', 'News', 'Events', 'Achievements', 'Academics', 'Sports', 'Culture'];
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:5000';
 
   useEffect(() => {
     const load = async () => {
       try {
         const cat = activeCategory === 'all' ? '' : `?category=${encodeURIComponent(activeCategory)}`;
-        const res = await fetch(`${API_BASE}/api/blogs${cat}`);
+        const res = await fetch(`${API_BASE}/blogs${cat}`);
         const data = await res.json();
         if (Array.isArray(data)) {
           const mapped = data.map((b: any) => ({

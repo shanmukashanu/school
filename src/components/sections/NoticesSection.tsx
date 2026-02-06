@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { useSchool } from '@/context/SchoolContext';
+import API_BASE from '@/lib/apiBase';
 
 export const NoticesSection: React.FC = () => {
   const { selectedSchool } = useSchool();
   const [notices, setNotices] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
-  const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:5000';
 
   useEffect(() => {
     const load = async () => {
       try {
         const schoolQ = selectedSchool ? `?school=${encodeURIComponent(selectedSchool.code)}` : '';
         const [nRes, eRes] = await Promise.all([
-          fetch(`${API_BASE}/api/notices${schoolQ}`),
-          fetch(`${API_BASE}/api/events${schoolQ}`),
+          fetch(`${API_BASE}/notices${schoolQ}`),
+          fetch(`${API_BASE}/events${schoolQ}`),
         ]);
         const n = await nRes.json().catch(() => []);
         const e = await eRes.json().catch(() => []);

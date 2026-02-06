@@ -4,8 +4,7 @@ import { saveAuth } from '@/lib/auth';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-
-const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:5000';
+import API_BASE from '@/lib/apiBase';
 
 const Login: React.FC = () => {
   const nav = useNavigate();
@@ -18,7 +17,7 @@ const Login: React.FC = () => {
     if (!username || !password) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

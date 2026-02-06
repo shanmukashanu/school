@@ -4,8 +4,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { SimpleSelect as Select } from '@/components/ui/SimpleSelect';
 import { saveAuth } from '@/lib/auth';
-
-const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:5000';
+import API_BASE from '@/lib/apiBase';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -28,7 +27,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: email, password }) // using email field as username
