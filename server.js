@@ -35,7 +35,28 @@ const PORT = process.env.PORT || 5000;
 
 
 
-app.use(cors());
+const DEFAULT_CORS_ORIGINS = [
+  'http://localhost:8080',
+  'http://127.0.0.1:8080',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://school-ybq2.onrender.com',
+];
+
+const corsAllowlist = (process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map((s) => s.trim()).filter(Boolean)
+  : DEFAULT_CORS_ORIGINS
+);
+
+app.use(cors({
+  origin(origin, callback) {
+    // allow non-browser requests or same-origin (no Origin header)
+    if (!origin) return callback(null, true);
+    if (corsAllowlist.includes(origin)) return callback(null, true);
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true,
+}));
 // Avoid 304 cached responses on API (helps frontend always get fresh JSON)
 app.disable('etag');
 app.use(express.json({ limit: '10mb' }));
